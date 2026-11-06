@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PickAndGo.Api/PickAndGo.Api.csproj" />
+    <Project Path="src/PickAndGo.Application/PickAndGo.Application.csproj" />
+    <Project Path="src/PickAndGo.Domain/PickAndGo.Domain.csproj" />
+    <Project Path="src/PickAndGo.Infrastructure/PickAndGo.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PickAndGo.Tests/PickAndGo.Tests.csproj" />
+  </Folder>
+</Solution>
