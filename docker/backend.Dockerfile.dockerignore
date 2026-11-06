@@ -1,0 +1,7 @@
+# O contexto do build é a raiz do repositório.
+# Ignora tudo e libera só o backend, sem artefatos de build locais.
+*
+!backend
+backend/**/bin
+backend/**/obj
+backend/tests
