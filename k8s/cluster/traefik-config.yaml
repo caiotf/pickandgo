@@ -1,0 +1,15 @@
+# Traefik do k3s em NodePort (30080/30443) para não disputar 80/443 com o Apache do Moodle
+apiVersion: helm.cattle.io/v1
+kind: HelmChartConfig
+metadata:
+  name: traefik
+  namespace: kube-system
+spec:
+  valuesContent: |-
+    service:
+      type: NodePort
+    ports:
+      web:
+        nodePort: 30080
+      websecure:
+        nodePort: 30443

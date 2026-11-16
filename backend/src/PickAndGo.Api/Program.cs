@@ -2,12 +2,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();   // gera o documento em /openapi/v1.json
+    app.MapOpenApi();   // documento em /openapi/v1.json
 
     app.UseSwaggerUI(options =>
     {
@@ -15,8 +16,12 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseHttpsRedirection();
 app.UseAuthorization();
+
 app.MapControllers();
+app.MapHealthChecks("/health");   // usado pelas probes do Kubernetes
 
 app.Run();
+
+// Permite que os testes de integração acessem a classe Program
+public partial class Program { }
