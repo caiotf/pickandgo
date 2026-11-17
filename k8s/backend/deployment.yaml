@@ -5,8 +5,15 @@ metadata:
   namespace: pickandgo
   labels:
     app: pickandgo-api
+  annotations:
+    kubernetes.io/change-cause: "sha-a2edb89: prefixo /api e endpoint /health"
 spec:
   replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       app: pickandgo-api
@@ -17,7 +24,7 @@ spec:
     spec:
       containers:
         - name: api
-          image: ghcr.io/caiotf/pickandgo-backend:sha-6928a7b
+          image: ghcr.io/caiotf/pickandgo-backend:sha-a2edb89
           ports:
             - name: http
               containerPort: 8080
@@ -32,13 +39,13 @@ spec:
               memory: 256Mi
           readinessProbe:
             httpGet:
-              path: /WeatherForecast
+              path: /health
               port: http
             initialDelaySeconds: 3
             periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: /WeatherForecast
+              path: /health
               port: http
             initialDelaySeconds: 10
             periodSeconds: 20
