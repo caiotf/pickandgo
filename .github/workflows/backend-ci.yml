@@ -3,27 +3,39 @@ name: Backend CI
 on:
   push:
     branches: [main, develop]
-    paths:
-      - 'backend/**'
-      - 'docker/backend.Dockerfile*'
-      - '.github/workflows/backend-ci.yml'
   pull_request:
     branches: [main, develop]
-    paths:
-      - 'backend/**'
-      - 'docker/backend.Dockerfile*'
-      - '.github/workflows/backend-ci.yml'
 
 permissions:
   contents: read
+  pull-requests: read
 
 concurrency:
   group: backend-ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
+  changes:
+    name: Detecta mudanças
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: dorny/paths-filter@v4
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+              - 'docker/backend.Dockerfile*'
+              - '.github/workflows/backend-ci.yml'
+
   build-test:
     name: Build e testes
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -46,7 +58,8 @@ jobs:
 
   docker-build:
     name: Build da imagem (ARM64)
-    needs: build-test
+    needs: [changes, build-test]
+    if: needs.changes.outputs.backend == 'true'
     runs-on: ubuntu-24.04-arm
     steps:
       - uses: actions/checkout@v6
