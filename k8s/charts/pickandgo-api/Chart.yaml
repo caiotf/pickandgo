@@ -1,0 +1,6 @@
+apiVersion: v2
+name: pickandgo-api
+description: API do PickAndGo (.NET 10)
+type: application
+version: 0.1.0              # versão do chart (muda quando os templates mudam)
+appVersion: "sha-a2edb89"   # versão da aplicação empacotada
