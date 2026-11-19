@@ -2,13 +2,14 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: pickandgo-api
-  namespace: pickandgo
   labels:
     app: pickandgo-api
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
   annotations:
-    kubernetes.io/change-cause: "sha-a2edb89: prefixo /api e endpoint /health"
+    kubernetes.io/change-cause: "{{ .Values.image.tag }} (helm revisão {{ .Release.Revision }})"
 spec:
-  replicas: 2
+  replicas: {{ .Values.replicaCount }}
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -24,19 +25,15 @@ spec:
     spec:
       containers:
         - name: api
-          image: ghcr.io/caiotf/pickandgo-backend:sha-a2edb89
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           ports:
             - name: http
               containerPort: 8080
           env:
             - name: ASPNETCORE_ENVIRONMENT
-              value: Production
+              value: {{ .Values.environment | quote }}
           resources:
-            requests:
-              cpu: 100m
-              memory: 128Mi
-            limits:
-              memory: 256Mi
+            {{- toYaml .Values.resources | nindent 12 }}
           readinessProbe:
             httpGet:
               path: /health
